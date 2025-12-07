@@ -1,0 +1,268 @@
+## ==========================================================================
+## OPERATING SYSTEM FILES
+## ==========================================================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+~$*
+*~
+
+## ==========================================================================
+## IDE & EDITORS (Visual Studio, VS Code, JetBrains, Eclipse...)
+## ==========================================================================
+# Visual Studio (classic)
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.vbw
+*.vbp
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.code-workspace
+
+# JetBrains (IntelliJ, WebStorm, Rider...)
+.idea/
+*.sublime-workspace
+
+# Eclipse / Other Editors
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+
+## ==========================================================================
+## NODEJS & JAVASCRIPT FRAMEWORKS (Angular, React...)
+## ==========================================================================
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log
+yarn-error.log
+testem.log
+/libpeerconnection.log
+
+# Build Output & Cache
+/dist
+/dist/
+/out-tsc/
+/bazel-out
+/tmp
+/connect.lock
+/coverage
+/typings
+.angular/
+.sass-cache/
+bower_components/
+
+## ==========================================================================
+## .NET / VISUAL STUDIO BUILD RESULTS
+## ==========================================================================
+# Build folders
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Aa][Rr][Mm]64[Ee][Cc]/
+bld/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+**/[Bb]in/*
+
+# Generated files
+Generated\ Files/
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.idb
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+!Directory.Build.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+project.lock.json
+project.fragment.lock.json
+artifacts/
+ScaffoldingReadMe.txt
+
+## ==========================================================================
+## TESTING & TOOLS
+## ==========================================================================
+# Tests
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+*.received.*
+
+# Code Coverage
+*.dotCover
+.axoCover/*
+!.axoCover/settings.json
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+OpenCover/
+
+# Profilers & Tools
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.e2e
+$tf/
+*.gpState
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+_TeamCity*
+_NCrunch_*
+.NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+*.mm.*
+AutoTest.Net/
+
+## ==========================================================================
+## PUBLISH & DEPLOYMENT
+## ==========================================================================
+publish/
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+PublishScripts/
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+csx/
+*.build.csdef
+ecf/
+rcf/
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.appx
+*.appxbundle
+*.appxupload
+
+## ==========================================================================
+## DOCKER & DATA (Custom)
+## ==========================================================================
+mssql_data/
+redis_data/
+seq_data/
+rabbitmq_data/
+
+## ==========================================================================
+## MISC
+## ==========================================================================
+ClientBin/
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+*.publishsettings
+orleans.codegen.cs
+Generated_Code/
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceFabricBackup/
+*.rptproj.bak
+*.mdf
+*.ldf
+*.ndf
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+*.rptproj.rsuser
+*- [Bb]ackup.rdl
+*- [Bb]ackup ([0-9]).rdl
+*- [Bb]ackup ([0-9][0-9]).rdl
+FakesAssemblies/
+*.GhostDoc.xml
+.ntvs_analysis.dat
+*.plg
+*.opt
+*.dsw
+*.dsp
+*.ncb
+*.aps
+**/.paket/paket.exe
+paket-files/
+**/.fake/
+**/.cr/personal
+**/__pycache__/
+*.pyc
+*.tss
+*.jmconfig
+*.btp.cs
+*.btm.cs
+*.odx.cs
+*.xsd.cs
+*.binlog
+MSBuild_Logs/
+.aws-sam
+*.nvuser
+**/.mfractor/
+**/.localhistory/
+.vshistory/
+healthchecksdb
+MigrationBackup/
+**/.ionide/
+FodyWeavers.xsd
+*.vsix
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
