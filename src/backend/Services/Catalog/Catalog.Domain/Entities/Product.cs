@@ -1,4 +1,7 @@
 ﻿using BuildingBlocks.Core.Entities;
+using Catalog.Domain.Enums;
+using Catalog.Domain.Exceptions;
+
 
 namespace Catalog.Domain.Entities
 {
@@ -8,69 +11,65 @@ namespace Catalog.Domain.Entities
         public decimal Price { get; private set; }
         public string Description { get; private set; } = default!;
         public string ImageUrl { get; private set; } = default!;
-        public string Status { get; private set; } = "Active";
+        public ProductStatus Status { get; private set; }
         public int Quantity { get; private set; }
 
-        public Product(string name, decimal price, string description, string imagerUrl)
+        public Guid CategoryId { get; private set; }
+
+        private Product() { }
+
+        public Product(string name, decimal price, string description, string imageUrl, Guid categoryId)
         {
-            this.Id = Guid.NewGuid();
-            this.Quantity = 0;
-            UpdateDetails(name, price, description, imagerUrl); 
+            Id = Guid.NewGuid();
+            Status = ProductStatus.Draft; 
+            Quantity = 0;
+            CategoryId = categoryId;
+
+            UpdateDetails(name, price, description, imageUrl, categoryId);
         }
 
-        // Nghiệp vụ Update
-        public void UpdateDetails(string name, decimal price, string description, string imageUrl)
+        public void UpdateDetails(string name, decimal price, string description, string imageUrl, Guid categoryId)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new Exception("Product name cannot be empty."); 
+            if (string.IsNullOrWhiteSpace(name)) throw new DomainException("Product name cannot be empty.");
+            if (price < 0) throw new DomainException("Price cannot be negative.");
+            if (string.IsNullOrWhiteSpace(imageUrl)) throw new DomainException("Product image URL cannot be empty.");
+            if (categoryId == Guid.Empty) throw new DomainException("Category is required.");
 
-            if (price < 0)
-                throw new Exception("Price cannot be negative.");
-
-            if (string.IsNullOrWhiteSpace(imageUrl))
-                throw new Exception("Product image URL cannot be empty.");
-
-            this.Name = name;
-            this.Price = price;
-            this.Description = description;
-            this.ImageUrl = imageUrl;
+            Name = name;
+            Price = price;
+            Description = description;
+            ImageUrl = imageUrl;
+            CategoryId = categoryId;
         }
 
-        // Nghiệp vụ nhập kho
         public void AddStock(int quantity)
         {
-            if (quantity <= 0)
-            {
-                throw new Exception("Quantity to add must be greater than 0.");
-            }
+            if (quantity <= 0) throw new DomainException("Quantity to add must be greater than 0.");
 
-            this.Quantity += quantity;
+            Quantity += quantity;
 
-            if (this.Quantity > 0 && this.Status == "OutOfStock")
+            if (Quantity > 0 && Status == ProductStatus.OutOfStock)
             {
-                this.Status = "Active";
+                Status = ProductStatus.Active;
             }
         }
 
-        // Nghiệp vụ lấy hàng khỏi kho
         public void RemoveStock(int quantity)
         {
-            if (quantity <= 0)
-            {
-                throw new Exception("Quantity to remove must be greater than 0.");
-            }
+            if (quantity <= 0) throw new DomainException("Quantity to remove must be greater than 0.");
 
-            if (this.Quantity < quantity)
-            {
-                throw new Exception($"Not enough stock. Available: {this.Quantity}, Requested: {quantity}");
-            }
+            if (Quantity < quantity)
+                throw new DomainException($"Not enough stock. Available: {Quantity}, Requested: {quantity}");
 
-            this.Quantity -= quantity;
+            Quantity -= quantity;
 
-            if (this.Quantity == 0)
+            if (Quantity == 0)
             {
-                this.Status = "OutOfStock";
+                Status = ProductStatus.OutOfStock;
             }
         }
+
+        public void Activate() => Status = ProductStatus.Active;
+        public void Discontinue() => Status = ProductStatus.Discontinued;
     }
 }
