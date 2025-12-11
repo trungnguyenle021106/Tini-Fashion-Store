@@ -1,4 +1,5 @@
 ﻿using Catalog.Application.Data;
+using Catalog.Domain.Entities;
 using MediatR;
 
 namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
@@ -12,8 +13,10 @@ namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
             this._repository = productRepository;
         }
 
-        public Task<CreateProductResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<CreateProductResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
+            Product product = new Product(request.name, request.price, request.description, request.imageUrl, request.categoryId);
+            await this._repository.AddAsync(product);
 
             throw new NotImplementedException();
         }

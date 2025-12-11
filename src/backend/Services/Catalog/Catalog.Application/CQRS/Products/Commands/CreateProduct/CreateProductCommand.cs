@@ -4,20 +4,21 @@ using MediatR;
 namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
 {
     public record CreateProductResult(
-            Guid Id,
+            Guid Id,           
             string Name,
             decimal Price,
             string Description,
             string ImageUrl,
             ProductStatus Status,
-            int Quantity
+            int Quantity,
+            Guid CategoryId
         );
 
     public record CreateProductCommand(
-            string name, 
-            decimal price, 
-            string description, 
-            string imageUrl, 
+            string name,
+            decimal price,
+            string description,
+            string imageUrl,
             Guid categoryId
         ) : IRequest<CreateProductResult>;
 }
