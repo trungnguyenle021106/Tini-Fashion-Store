@@ -1,6 +1,7 @@
 ﻿using Carter;
-using Catalog.Application.CQRS.Products.Commands.CreateProduct;
+using Catalog.Application.CQRS.Products.Queries.GetProduct;
 using Catalog.Domain.Enums;
+using Mapster;
 using MediatR;
 
 namespace Catalog.API.Endpoints.Products
@@ -23,8 +24,6 @@ namespace Catalog.API.Endpoints.Products
             {
                 var result = await sender.Send(new GetProductsQuery());
 
-                // Map từ Result (Entity) sang Response (DTO)
-                // Mapster đủ thông minh để map list sang list
                 var response = result.Adapt<GetProductsResponse>();
 
                 return Results.Ok(response);
