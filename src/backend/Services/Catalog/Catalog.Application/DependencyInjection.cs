@@ -14,7 +14,7 @@ namespace Catalog.Application
 
             config.RegisterProductMappings();
 
-            config.Scan(Assembly.GetExecutingAssembly());
+            //config.Scan(Assembly.GetExecutingAssembly()); Đợi khi nào nâng cao lên thì dùng lại
 
             services.AddSingleton(config);
             services.AddScoped<IMapper, ServiceMapper>(); 

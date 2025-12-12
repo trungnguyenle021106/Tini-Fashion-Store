@@ -1,4 +1,5 @@
-﻿using Catalog.Domain.Enums;
+﻿using BuildingBlocks.Core.CQRS;
+using Catalog.Domain.Enums;
 using MediatR;
 
 namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
@@ -20,5 +21,5 @@ namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
             string description,
             string imageUrl,
             Guid categoryId
-        ) : IRequest<CreateProductResult>;
+        ) : ICommand<CreateProductResult>;
 }
