@@ -1,9 +1,10 @@
-﻿using Catalog.Domain.Entities;
+﻿using Catalog.Application.Common.Interfaces;
+using Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.Infrastructure.Data.EFCore
+namespace Catalog.Infrastructure.Data
 {
-    public class CatalogDbContext : DbContext
+    public class CatalogDbContext : DbContext, IApplicationDbContext
     {
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options) : base(options)
         {
@@ -26,6 +27,11 @@ namespace Catalog.Infrastructure.Data.EFCore
                        .IsRequired()                   
                        .OnDelete(DeleteBehavior.Restrict);
             });
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

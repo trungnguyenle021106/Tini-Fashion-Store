@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catalog.Infrastructure.Data.EFCore
+namespace Catalog.Infrastructure.Data
 {
     public class ProductRepository : BaseRepositoryEFcore<Product, CatalogDbContext>, IProductRepository
     {

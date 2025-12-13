@@ -29,10 +29,10 @@ namespace Catalog.API.Endpoints.Products
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/products", async (CreateProductRequest request, ISender sender) =>
+            app.MapPost("/products", async (CreateProductRequest request, CancellationToken cancellationToken, ISender sender) =>
             {
                 var command = request.Adapt<CreateProductCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
                 var response = result.Adapt<CreateProductResponse>();
 

@@ -1,21 +1,23 @@
-﻿using Catalog.Application.Data;
+﻿using Catalog.Application.Common.Interfaces;
+using Catalog.Application.Data;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Application.CQRS.Products.Queries.GetProduct
 {
     public class GetProductsHandler
          : IRequestHandler<GetProductsQuery, GetProductsResult>
     {
-        private readonly IProductRepository _repository;
+        private readonly IApplicationDbContext _dbContext;
 
-        public GetProductsHandler(IProductRepository productRepository)
+        public GetProductsHandler(IApplicationDbContext _dbContext)
         {
-            this._repository = productRepository;
+            this._dbContext = _dbContext;
         }
 
         public async Task<GetProductsResult> Handle(GetProductsQuery query, CancellationToken cancellationToken)
         {
-            var products = (await _repository.GetAllAsync());
+            var products = await _dbContext.Products.AsNoTracking().ToListAsync(cancellationToken);
             return new GetProductsResult(products);
         }
     }
