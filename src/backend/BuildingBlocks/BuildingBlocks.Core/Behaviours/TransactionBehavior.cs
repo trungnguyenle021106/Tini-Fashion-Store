@@ -11,7 +11,7 @@ namespace Catalog.Application.CQRS.Behaviours
 
         public TransactionBehavior(IApplicationDbContext _dbContext)
         {
-            _dbContext = _dbContext;
+            this._dbContext = _dbContext;
         }
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
