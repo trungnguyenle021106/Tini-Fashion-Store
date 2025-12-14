@@ -29,10 +29,8 @@ namespace Catalog.Domain.Entities
 
         public void UpdateDetails(string name, decimal price, string description, string imageUrl, Guid categoryId)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new DomainException("Product name cannot be empty.");
-            if (price < 0) throw new DomainException("Price cannot be negative.");
-            if (string.IsNullOrWhiteSpace(imageUrl)) throw new DomainException("Product image URL cannot be empty.");
-            if (categoryId == Guid.Empty) throw new DomainException("Category is required.");
+            if (price < 0) throw new DomainException("Giá không được âm.");
+            if (categoryId == Guid.Empty) throw new DomainException("Bắt buộc phải có Thể loại.");
 
             Name = name;
             Price = price;
@@ -43,7 +41,7 @@ namespace Catalog.Domain.Entities
 
         public void AddStock(int quantity)
         {
-            if (quantity <= 0) throw new DomainException("Quantity to add must be greater than 0.");
+            if (quantity <= 0) throw new DomainException("Số lượng thêm vào phải lớn hơn 0.");
 
             Quantity += quantity;
 
@@ -55,10 +53,10 @@ namespace Catalog.Domain.Entities
 
         public void RemoveStock(int quantity)
         {
-            if (quantity <= 0) throw new DomainException("Quantity to remove must be greater than 0.");
+            if (quantity <= 0) throw new DomainException("Số lượng lấy ra phải lớn hơn 0.");
 
             if (Quantity < quantity)
-                throw new DomainException($"Not enough stock. Available: {Quantity}, Requested: {quantity}");
+                throw new DomainException($"Không đủ hàng. Số lượng đang có: {Quantity}, số lượng yêu cầu: {quantity}");
 
             Quantity -= quantity;
 
