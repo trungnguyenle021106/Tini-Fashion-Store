@@ -12,7 +12,7 @@ builder.Services.AddDbContext<CatalogDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
-builder.Services.AddScoped<IApplicationDbContext>(provider =>
+builder.Services.AddScoped<ICatalogDbContext>(provider =>
     provider.GetRequiredService<CatalogDbContext>());
 
 builder.Services.AddCustomMediatR(typeof(Catalog.Application.AssemblyReference).Assembly);
