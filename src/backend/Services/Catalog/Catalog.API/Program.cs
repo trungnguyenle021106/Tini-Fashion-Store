@@ -1,6 +1,5 @@
 ﻿using BuildingBlocks.Core.Extensions;
 using Carter;
-using Catalog.Application;
 using Catalog.Application.Common.Interfaces;
 using Catalog.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ builder.Services.AddScoped<ICatalogDbContext>(provider =>
     provider.GetRequiredService<CatalogDbContext>());
 
 builder.Services.AddCustomMediatR(typeof(Catalog.Application.AssemblyReference).Assembly);
-builder.Services.AddApplication();
+builder.Services.AddCustomMapster(typeof(Catalog.Application.AssemblyReference).Assembly);
 
 var app = builder.Build();
 
