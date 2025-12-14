@@ -1,8 +1,6 @@
-﻿using Catalog.Application.Common.Mapping;
-using Mapster;
+﻿using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Catalog.Application
 {
@@ -11,8 +9,6 @@ namespace Catalog.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;
-
-            config.RegisterProductMappings();
 
             //config.Scan(Assembly.GetExecutingAssembly()); Đợi khi nào nâng cao lên thì dùng lại
 
