@@ -16,8 +16,14 @@ builder.Services.AddScoped<ICatalogDbContext>(provider =>
 
 builder.Services.AddCustomMediatR(typeof(Catalog.Application.AssemblyReference).Assembly);
 builder.Services.AddCustomMapster(typeof(Catalog.Application.AssemblyReference).Assembly);
+builder.Services.AddCustomSwagger(builder.Configuration);
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCustomSwagger();
+}
 
 app.MapCarter();
 
