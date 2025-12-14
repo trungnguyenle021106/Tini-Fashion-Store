@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Core.Entities;
-using Catalog.Domain.Exceptions;
+using BuildingBlocks.Core.Exceptions;
+
 
 namespace Catalog.Domain.Entities
 {
