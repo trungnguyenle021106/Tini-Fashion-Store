@@ -88,15 +88,24 @@ namespace BuildingBlocks.Core.Middlewares
             problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
             problemDetails.Detail = "An error occurred while saving data.";
 
-            if (exception.InnerException != null &&
-               (exception.InnerException.Message.Contains("duplicate") ||
-                exception.InnerException.Message.Contains("unique") ||
-                exception.InnerException.Message.Contains("IX_"))) 
+            var innerMessage = exception.InnerException?.Message ?? "";
+
+            if (innerMessage.Contains("duplicate", StringComparison.OrdinalIgnoreCase) ||
+                innerMessage.Contains("unique", StringComparison.OrdinalIgnoreCase) ||
+                innerMessage.Contains("IX_", StringComparison.OrdinalIgnoreCase))
             {
                 problemDetails.Status = StatusCodes.Status409Conflict;
                 problemDetails.Title = "Data Conflict";
                 problemDetails.Detail = "Record already exists or violates unique constraint.";
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.8";
+            }
+            else if (innerMessage.Contains("FOREIGN KEY", StringComparison.OrdinalIgnoreCase) ||
+                     innerMessage.Contains("REFERENCE constraint", StringComparison.OrdinalIgnoreCase))
+            {
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Title = "Invalid Reference";
+                problemDetails.Detail = "The referenced entity does not exist (Foreign Key Violation).";
+                problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
             }
         }
 
