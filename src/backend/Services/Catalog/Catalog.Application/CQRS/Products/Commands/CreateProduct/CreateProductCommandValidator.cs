@@ -6,10 +6,10 @@ namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
     {
         public CreateProductCommandValidator()
         {
-            RuleFor(x => x.name)
+            RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Tên sản phẩm không được để trống.");
 
-            RuleFor(x => x.imageUrl)
+            RuleFor(x => x.ImageUrl)
                 .NotEmpty().WithMessage("Hình ảnh sản phẩm không được để trống.");          
         }
     }

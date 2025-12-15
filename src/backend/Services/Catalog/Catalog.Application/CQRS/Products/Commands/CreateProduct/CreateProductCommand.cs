@@ -15,10 +15,10 @@ namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
         );
 
     public record CreateProductCommand(
-            string name,
-            decimal price,
-            string description,
-            string imageUrl,
-            Guid categoryId
-        ) : ICommand<CreateProductResult>;
+        string Name,
+        decimal Price,
+        string Description,
+        string ImageUrl,
+        Guid CategoryId
+    ) : ICommand<CreateProductResult>;
 }

@@ -5,14 +5,14 @@ using Mapster;
 using MediatR;
 
 namespace Catalog.API.Endpoints.Products
-{   
+{
     public record CreateProductRequest(
-            string name,
-            decimal price,
-            string description,
-            string imageUrl,
-            Guid categoryId
-        );
+          string Name,
+          decimal Price,
+          string Description,
+          string ImageUrl,
+          Guid CategoryId
+      );
 
     public record CreateProductResponse(
             Guid Id,

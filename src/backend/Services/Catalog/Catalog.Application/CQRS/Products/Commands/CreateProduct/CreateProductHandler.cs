@@ -15,7 +15,7 @@ namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
 
         public async Task<CreateProductResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            Product product = new Product(request.name, request.price, request.description, request.imageUrl, request.categoryId);
+            Product product = new Product(request.Name, request.Price, request.Description, request.ImageUrl, request.CategoryId);
             await this._dbContext.Products.AddAsync(product);
 
             return new CreateProductResult(
