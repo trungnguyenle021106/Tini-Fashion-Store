@@ -19,7 +19,7 @@ namespace Catalog.Application.CQRS.Products.Commands.ActivateProduct
 
             if (product == null)
             {
-                throw new KeyNotFoundException($"Product with Id {command.Id} not found.");
+                throw new KeyNotFoundException($"Không tìm thấy sản phẩm với Id: {command.Id}");
             }
 
             product.Activate();
