@@ -1,6 +1,7 @@
 ﻿using Identity.Application.Common.Interfaces;
 using Identity.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Identity.Infrastructure.Data
 {
@@ -14,6 +15,11 @@ namespace Identity.Infrastructure.Data
         public DbSet<UserAddress> UserAddresses { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await Database.BeginTransactionAsync();
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -24,13 +30,13 @@ namespace Identity.Infrastructure.Data
                       .HasMaxLength(150);
 
                 entity.Property(u => u.AvatarUrl)
-                      .IsRequired(false); 
+                      .IsRequired(false);
             });
 
 
             builder.Entity<UserAddress>(entity =>
             {
-                entity.ToTable("UserAddresses"); 
+                entity.ToTable("UserAddresses");
 
                 entity.HasKey(a => a.Id);
 
