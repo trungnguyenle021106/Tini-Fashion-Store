@@ -1,6 +1,7 @@
 ﻿using Catalog.Application.Common.Interfaces;
 using Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Catalog.Infrastructure.Data
 {
@@ -32,6 +33,11 @@ namespace Catalog.Infrastructure.Data
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await Database.BeginTransactionAsync();
         }
     }
 }
