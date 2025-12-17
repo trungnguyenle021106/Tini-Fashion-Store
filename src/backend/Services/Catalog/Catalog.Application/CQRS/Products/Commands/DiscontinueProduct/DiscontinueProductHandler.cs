@@ -24,7 +24,6 @@ namespace Catalog.Application.CQRS.Products.Commands.DiscontinueProduct
             product.Discontinue();
 
             _dbContext.Products.Update(product);
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new DiscontinueProductResult(true);
         }

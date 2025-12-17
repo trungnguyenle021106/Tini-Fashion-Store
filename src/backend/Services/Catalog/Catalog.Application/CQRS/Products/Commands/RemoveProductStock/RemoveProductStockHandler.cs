@@ -24,7 +24,6 @@ namespace Catalog.Application.CQRS.Products.Commands.RemoveProductStock
             product.RemoveStock(command.Quantity);
 
             _dbContext.Products.Update(product);
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new RemoveProductStockResult(true);
         }

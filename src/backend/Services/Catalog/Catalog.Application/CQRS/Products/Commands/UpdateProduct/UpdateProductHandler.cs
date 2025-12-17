@@ -31,8 +31,6 @@ namespace Catalog.Application.CQRS.Products.Commands.UpdateProduct
             );
             _dbContext.Products.Update(product);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
             return new UpdateProductResult(true);
         }
     }

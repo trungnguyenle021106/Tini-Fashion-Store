@@ -25,7 +25,6 @@ namespace Catalog.Application.CQRS.Products.Commands.ActivateProduct
             product.Activate();
 
             _dbContext.Products.Update(product);
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActivateProductResult(true);
         }
