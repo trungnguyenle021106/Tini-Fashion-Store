@@ -11,6 +11,8 @@ namespace BuildingBlocks.Core.Extensions
     {
         public static IServiceCollection AddCustomMediatR(this IServiceCollection services, Assembly assembly)
         {
+
+            services.AddValidatorsFromAssembly(assembly);
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(assembly);
@@ -18,8 +20,6 @@ namespace BuildingBlocks.Core.Extensions
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 cfg.AddOpenBehavior(typeof(TransactionBehavior<,>)); 
             });
-
-            services.AddValidatorsFromAssembly(assembly);
             return services;
         }
     }
