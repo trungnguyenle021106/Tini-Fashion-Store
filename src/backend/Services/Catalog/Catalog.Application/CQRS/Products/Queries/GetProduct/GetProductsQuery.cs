@@ -1,9 +1,21 @@
 ﻿using BuildingBlocks.Core.CQRS;
-using Catalog.Domain.Entities;
+using Catalog.Domain.Enums;
 
 namespace Catalog.Application.CQRS.Products.Queries.GetProduct
 {
-    public record GetProductsResult(PaginatedResult<Product> Products);
+    public class ProductDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = default!;
+        public decimal Price { get; set; }
+        public string Description { get; set; } = default!;
+        public string ImageUrl { get; set; } = default!;
+        public ProductStatus Status { get; set; }
+        public int Quantity { get; set; }
+        public Guid CategoryId { get; set; }
+    }
+
+    public record GetProductsResult(PaginatedResult<ProductDto> Products);
 
     public record GetProductsQuery(
         int PageNumber = 1,

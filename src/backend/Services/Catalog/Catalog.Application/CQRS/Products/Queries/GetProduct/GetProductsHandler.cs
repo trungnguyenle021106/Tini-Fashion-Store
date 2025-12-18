@@ -30,7 +30,7 @@ namespace Catalog.Application.CQRS.Products.Queries.GetProduct
             }
             var paginatedProducts = await productsQuery
                 .OrderBy(p => p.Name)
-                .ToPaginatedListAsync<Product, Product>(
+                .ToPaginatedListAsync<Product, ProductDto>(
                     query.PageNumber,
                     query.PageSize,
                     cancellationToken

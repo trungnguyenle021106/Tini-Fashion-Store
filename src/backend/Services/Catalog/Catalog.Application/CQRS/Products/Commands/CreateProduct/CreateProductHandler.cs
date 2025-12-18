@@ -1,5 +1,6 @@
 ﻿using Catalog.Application.Common.Interfaces;
 using Catalog.Domain.Entities;
+using Mapster;
 using MediatR;
 
 namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
@@ -15,19 +16,10 @@ namespace Catalog.Application.CQRS.Products.Commands.CreateProduct
 
         public async Task<CreateProductResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            Product product = new Product(request.Name, request.Price, request.Description, request.ImageUrl, request.CategoryId);
+            var product = request.Adapt<Product>();
             await this._dbContext.Products.AddAsync(product);
 
-            return new CreateProductResult(
-                    product.Id, 
-                    product.Name,
-                    product.Price, 
-                    product.Description, 
-                    product.ImageUrl, 
-                    product.Status, 
-                    product.Quantity, 
-                    product.CategoryId
-                );
+            return product.Adapt<CreateProductResult>();
         }
     }
 }
