@@ -6,27 +6,49 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Endpoints.Auth
 {
-    public record RefreshTokenRequest(string RefreshToken);
-
-    public record RefreshTokenResponse(string AccessToken, string RefreshToken);
-
     public class RefreshTokenEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/auth/refresh-token", async ([FromBody] RefreshTokenRequest request, ISender sender, CancellationToken cancellationToken) =>
+            app.MapPost("/auth/refresh-token", async (ISender sender, HttpContext context, CancellationToken cancellationToken) =>
             {
-                var command = new RefreshTokenCommand(request.RefreshToken);
+                if (!context.Request.Cookies.TryGetValue("refresh_token", out var currentRefreshToken))
+                {
+                    return Results.Unauthorized();
+                }
+
+                var command = new RefreshTokenCommand(currentRefreshToken);
 
                 var result = await sender.Send(command, cancellationToken);
 
-                var response = result.Adapt<RefreshTokenResponse>();
+                var baseCookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                };
 
-                return Results.Ok(response);
+                context.Response.Cookies.Append("access_token", result.AccessToken, new CookieOptions
+                {
+                    HttpOnly = baseCookieOptions.HttpOnly,
+                    Secure = baseCookieOptions.Secure,
+                    SameSite = baseCookieOptions.SameSite,
+                    Expires = DateTime.UtcNow.AddMinutes(15)
+                });
+
+                context.Response.Cookies.Append("refresh_token", result.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = baseCookieOptions.HttpOnly,
+                    Secure = baseCookieOptions.Secure,
+                    SameSite = baseCookieOptions.SameSite,
+                    Expires = DateTime.UtcNow.AddDays(7)
+                });
+
+                return Results.Ok();
             })
             .WithName("RefreshToken")
-            .WithSummary("Refresh Access Token")
-            .WithDescription("Exchange a valid Refresh Token for a new pair of Access Token and Refresh Token");
+            .WithSummary("Refresh Access Token via Cookie")
+            .WithDescription("Exchange a valid Refresh Token cookie for a new pair of Access & Refresh Token cookies");
         }
     }
 }

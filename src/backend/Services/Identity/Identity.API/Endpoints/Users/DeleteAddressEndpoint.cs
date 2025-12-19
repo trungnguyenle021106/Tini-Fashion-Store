@@ -1,4 +1,5 @@
-﻿using Carter;
+﻿using System.Security.Claims; 
+using Carter;
 using Identity.Application.CQRS.Users.Commands.DeleteAddress;
 using Mapster;
 using MediatR;
@@ -11,8 +12,15 @@ namespace Identity.API.Endpoints.Users
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/users/{userId}/addresses/{addressId}", async (Guid userId, Guid addressId, ISender sender) =>
+            app.MapDelete("/users/addresses/{addressId}", async (Guid addressId, ClaimsPrincipal user, ISender sender) =>
             {
+                var userIdString = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
+
                 var command = new DeleteAddressCommand(userId, addressId);
 
                 var result = await sender.Send(command);
@@ -23,7 +31,8 @@ namespace Identity.API.Endpoints.Users
             })
             .WithName("DeleteAddress")
             .WithSummary("Delete user address")
-            .WithDescription("Permanently remove a delivery address.");
+            .WithDescription("Permanently remove a delivery address.")
+            .RequireAuthorization(); 
         }
     }
 }

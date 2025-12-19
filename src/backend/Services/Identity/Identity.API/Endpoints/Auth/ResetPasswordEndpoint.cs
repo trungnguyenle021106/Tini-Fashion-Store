@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Endpoints.Auth
 {
-    public record ResetPasswordRequest(string Email, string Token, string NewPassword);
+    public record ResetPasswordRequest(string Email, string VerifyToken, string NewPassword);
     public record ResetPasswordResponse(bool IsSuccess);
 
     public class ResetPasswordEndpoint : ICarterModule

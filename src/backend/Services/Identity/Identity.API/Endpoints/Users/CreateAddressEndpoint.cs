@@ -1,4 +1,5 @@
-﻿using Carter;
+﻿using System.Security.Claims; // Cần namespace này
+using Carter;
 using Identity.Application.CQRS.Users.Commands.CreateAddress;
 using Identity.Domain.Enums;
 using Mapster;
@@ -21,8 +22,17 @@ namespace Identity.API.Endpoints.Users
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/users/{userId}/addresses", async (Guid userId, [FromBody] CreateAddressRequest request, ISender sender) =>
+            app.MapPost("/users/addresses", async (ClaimsPrincipal user, [FromBody] CreateAddressRequest request, ISender sender) =>
             {
+                var userIdString = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdString))
+                {
+                    return Results.Unauthorized();
+                }
+
+                var userId = Guid.Parse(userIdString);
+
                 var command = new CreateAddressCommand(
                     UserId: userId,
                     ReceiverName: request.ReceiverName,
@@ -40,7 +50,8 @@ namespace Identity.API.Endpoints.Users
             })
             .WithName("CreateAddress")
             .WithSummary("Create new user address")
-            .WithDescription("Add a new delivery address for the user.");
+            .WithDescription("Add a new delivery address for the current user.")
+            .RequireAuthorization(); 
         }
     }
 }

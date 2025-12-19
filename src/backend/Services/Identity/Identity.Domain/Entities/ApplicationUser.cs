@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Core.Exceptions;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Identity.Domain.Entities
 {
@@ -7,6 +6,8 @@ namespace Identity.Domain.Entities
     {
         public string FullName { get; private set; } = default!;
         public string? AvatarUrl { get; private set; }
+
+        private ApplicationUser() { }
 
         public ApplicationUser(string fullName, string email)
         {

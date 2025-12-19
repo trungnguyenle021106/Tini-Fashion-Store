@@ -25,6 +25,8 @@ namespace Identity.Infrastructure.Data
             base.OnModelCreating(builder);
             builder.Entity<ApplicationUser>(entity =>
             {
+                entity.ToTable("ApplicationUsers");
+
                 entity.Property(u => u.FullName)
                       .IsRequired()
                       .HasMaxLength(150);

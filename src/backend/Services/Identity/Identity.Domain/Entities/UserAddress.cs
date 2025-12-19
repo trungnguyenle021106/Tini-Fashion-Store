@@ -1,11 +1,11 @@
-﻿using BuildingBlocks.Core.Extensions;
+﻿using BuildingBlocks.Core.Entities;
+using BuildingBlocks.Core.Extensions;
 using Identity.Domain.Enums;
 
 namespace Identity.Domain.Entities
 {
-    public class UserAddress
+    public class UserAddress : BaseEntity<Guid>
     {
-        public Guid Id { get; private set; }
         public string UserId { get; private set; } = default!;
 
         public string ReceiverName { get; private set; } = default!;
@@ -25,8 +25,6 @@ namespace Identity.Domain.Entities
         public UserAddress(string userId, string receiverName, string phoneNumber, string street, Wards ward, bool isDefault = false)
         {
             Id = Guid.NewGuid();
-            if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User ID required");
-
             UserId = userId;
             Update(receiverName, phoneNumber, street, ward, isDefault);
         }

@@ -1,31 +1,37 @@
 ﻿using Carter;
 using Identity.Application.CQRS.Auth.Commands.Logout;
-using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Endpoints.Auth
 {
-    public record LogoutRequest(string RefreshToken);
-    public record LogoutResponse(bool IsSuccess);
-
     public class LogoutEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/auth/logout", async ([FromBody] LogoutRequest request, ISender sender) =>
+            app.MapPost("/auth/logout", async (ISender sender, HttpContext context) =>
             {
-                var command = new LogoutCommand(request.RefreshToken);
+                var refreshToken = context.Request.Cookies["refresh_token"];
+                if (!string.IsNullOrEmpty(refreshToken))
+                {
+                    var command = new LogoutCommand(refreshToken);
+                    try
+                    {
+                        await sender.Send(command);
+                    }
+                    catch
+                    {
 
-                var result = await sender.Send(command);
+                    }
+                }
 
-                var response = result.Adapt<LogoutResponse>();
+                context.Response.Cookies.Delete("access_token");
+                context.Response.Cookies.Delete("refresh_token");
 
-                return Results.Ok(response);
+                return Results.Ok();
             })
             .WithName("Logout")
-            .WithSummary("Revoke Refresh Token")
-            .WithDescription("Logout user by revoking the refresh token.");
+            .WithSummary("Revoke Refresh Token & Clear Cookies")
+            .WithDescription("Logout user by revoking the refresh token and clearing HttpOnly cookies.");
         }
     }
 }

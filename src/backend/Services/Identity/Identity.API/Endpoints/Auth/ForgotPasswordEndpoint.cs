@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Identity.API.Endpoints.Auth
 {
     public record ForgotPasswordRequest(string Email);
-    public record ForgotPasswordResponse(string Token);
+    public record ForgotPasswordResponse(string VerifyToken);
 
     public class ForgotPasswordEndpoint : ICarterModule
     {

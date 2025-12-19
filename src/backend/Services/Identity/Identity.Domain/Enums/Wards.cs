@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Identity.Domain.Enums
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Wards
     {
         [Description("Phường Thủ Dầu Một")] PhuongThuDauMot,

@@ -1,9 +1,9 @@
-﻿namespace Identity.Domain.Entities
-{
-    public class RefreshToken
-    {
-        public Guid Id { get; private set; }
+﻿using BuildingBlocks.Core.Entities;
 
+namespace Identity.Domain.Entities
+{
+    public class RefreshToken : BaseEntity<Guid>
+    {
         public string UserId { get; private set; } = default!;
 
         public string Token { get; private set; } = default!;
