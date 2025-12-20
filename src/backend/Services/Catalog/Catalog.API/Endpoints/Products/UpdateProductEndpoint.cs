@@ -32,7 +32,8 @@ namespace Catalog.API.Endpoints.Products
             })
             .WithName("UpdateProduct")
             .WithSummary("Update a product")
-            .WithDescription("Update an existing product in the catalog");
+            .WithDescription("Update an existing product in the catalog")
+            .RequireAuthorization();
         }
     }
 }

@@ -17,13 +17,26 @@ builder.Services.AddCustomSwagger(builder.Configuration);
 builder.Services.AddCustomExceptionHandler();
 
 builder.Services.AddCarter();
+
+builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorization(options =>
+{
+});
+
 var app = builder.Build();
 
 app.UseCustomExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCustomSwagger();
 }
+
+app.UseCors(CorsExtensions.AllowAllPolicy);
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapCarter();
 
 app.Run();

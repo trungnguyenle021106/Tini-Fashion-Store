@@ -18,9 +18,6 @@ namespace Catalog.Domain.Entities
 
         public void UpdateName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("Category name cannot be empty.");
-
             Name = name;
         }
     }

@@ -2,7 +2,6 @@
 using Catalog.Application.CQRS.Products.Commands.ActivateProduct;
 using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Endpoints.Products
 {
@@ -24,7 +23,8 @@ namespace Catalog.API.Endpoints.Products
             })
             .WithName("ActivateProduct")
             .WithSummary("Activate a product")
-            .WithDescription("Change product status to Active");
+            .WithDescription("Change product status to Active")
+            .RequireAuthorization();
         }
     }
 }

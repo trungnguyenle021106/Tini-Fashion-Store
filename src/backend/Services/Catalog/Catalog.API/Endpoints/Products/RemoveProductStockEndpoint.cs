@@ -26,7 +26,8 @@ namespace Catalog.API.Endpoints.Products
             })
             .WithName("RemoveProductStock")
             .WithSummary("Remove stock from product")
-            .WithDescription("Decrease the quantity of a product inside the catalog");
+            .WithDescription("Decrease the quantity of a product inside the catalog")
+            .RequireAuthorization();
         }
     }
 }

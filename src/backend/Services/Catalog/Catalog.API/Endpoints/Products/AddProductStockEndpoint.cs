@@ -16,7 +16,7 @@ namespace Catalog.API.Endpoints.Products
         {
             app.MapPost("/products/{id}/stock", async (Guid id, [FromBody] AddProductStockRequest request, ISender sender, CancellationToken cancellationToken) =>
             {
-                var command = request.Adapt<AddProductStockCommand>() with { Id = id };
+                var command = new AddProductStockCommand(id, request.Quantity);
 
                 var result = await sender.Send(command, cancellationToken);
 
@@ -26,7 +26,8 @@ namespace Catalog.API.Endpoints.Products
             })
             .WithName("AddProductStock")
             .WithSummary("Add stock to product")
-            .WithDescription("Increase the quantity of a product inside the catalog");
+            .WithDescription("Increase the quantity of a product inside the catalog")
+            .RequireAuthorization();
         }
     }
 }
