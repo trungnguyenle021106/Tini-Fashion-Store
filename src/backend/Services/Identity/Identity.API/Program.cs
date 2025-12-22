@@ -1,5 +1,4 @@
 ﻿using BuildingBlocks.Application.Extensions;
-using BuildingBlocks.Core.Extensions;
 using BuildingBlocks.Infrastructure.Extensions;
 using Carter;
 using Identity.Application.Common.Interfaces;

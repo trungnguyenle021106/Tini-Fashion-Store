@@ -1,6 +1,6 @@
 ﻿using Basket.Application.Common.Interfaces;
 using Basket.Infrastructure.Repositories;
-using BuildingBlocks.Core.Extensions;
+using BuildingBlocks.Application.Extensions;
 using BuildingBlocks.Infrastructure.Extensions;
 using Carter;
 
@@ -10,7 +10,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-
 builder.Services.AddCustomMediatR(typeof(Basket.Application.AssemblyReference).Assembly);
 builder.Services.AddCustomMapster(typeof(Basket.Application.AssemblyReference).Assembly);
 builder.Services.AddCustomSwagger(builder.Configuration);
