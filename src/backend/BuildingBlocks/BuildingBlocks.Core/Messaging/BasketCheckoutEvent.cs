@@ -1,4 +1,4 @@
-﻿namespace BuildingBlocks.Infrastructure.Messaging
+﻿namespace BuildingBlocks.Core.Messaging
 {
     public record BasketCheckoutEvent
     {
