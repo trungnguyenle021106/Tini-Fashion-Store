@@ -26,7 +26,7 @@ namespace Basket.Application.CQRS.Basket.Commands.CheckoutBasket
 
             var eventMessage = new BasketCheckoutEvent
             {
-                UserName = command.UserName,
+                Email = command.UserName,
                 TotalPrice = basket.TotalPrice,
                 ReceiverName = command.ReceiverName,
                 PhoneNumber = command.PhoneNumber,
