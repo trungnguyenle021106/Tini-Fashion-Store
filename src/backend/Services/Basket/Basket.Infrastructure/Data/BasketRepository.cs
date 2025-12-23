@@ -14,13 +14,16 @@ namespace Basket.Infrastructure.Repositories
             _redisCache = redisCache;
         }
 
-        public async Task<ShoppingCart> GetBasketAsync(string userName, CancellationToken cancellationToken = default)
+        private string GetBasketKey(Guid userId) => $"basket:{userId}";
+
+        public async Task<ShoppingCart> GetBasketAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var basketJson = await _redisCache.GetStringAsync(userName, cancellationToken);
+            var key = GetBasketKey(userId);
+            var basketJson = await _redisCache.GetStringAsync(key, cancellationToken);
 
             if (string.IsNullOrEmpty(basketJson))
             {
-                return null!;
+                return new ShoppingCart(userId);
             }
 
             return JsonSerializer.Deserialize<ShoppingCart>(basketJson)!;
@@ -28,16 +31,18 @@ namespace Basket.Infrastructure.Repositories
 
         public async Task<ShoppingCart> UpdateBasketAsync(ShoppingCart basket, CancellationToken cancellationToken = default)
         {
+            var key = GetBasketKey(basket.UserId);
             var basketJson = JsonSerializer.Serialize(basket);
 
-            await _redisCache.SetStringAsync(basket.UserName, basketJson, cancellationToken);
+            await _redisCache.SetStringAsync(key, basketJson, cancellationToken);
 
-            return await GetBasketAsync(basket.UserName, cancellationToken);
+            return basket; 
         }
 
-        public async Task<bool> DeleteBasketAsync(string userName, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteBasketAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            await _redisCache.RemoveAsync(userName, cancellationToken);
+            var key = GetBasketKey(userId);
+            await _redisCache.RemoveAsync(key, cancellationToken);
             return true;
         }
     }

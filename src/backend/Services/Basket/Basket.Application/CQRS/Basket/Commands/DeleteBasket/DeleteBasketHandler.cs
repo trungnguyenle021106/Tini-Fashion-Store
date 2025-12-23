@@ -14,7 +14,7 @@ namespace Basket.Application.CQRS.Basket.Commands.DeleteBasket
 
         public async Task<DeleteBasketResult> Handle(DeleteBasketCommand command, CancellationToken cancellationToken)
         {
-            await _repository.DeleteBasketAsync(command.UserName, cancellationToken);
+            await _repository.DeleteBasketAsync(command.UserId, cancellationToken);
 
             return new DeleteBasketResult(true);
         }

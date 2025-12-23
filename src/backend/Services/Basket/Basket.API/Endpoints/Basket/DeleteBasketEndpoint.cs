@@ -1,7 +1,9 @@
 ﻿using Basket.Application.CQRS.Basket.Commands.DeleteBasket;
+using BuildingBlocks.Infrastructure.Extensions;
 using Carter;
 using Mapster;
 using MediatR;
+using System.Security.Claims;
 
 namespace Basket.API.Endpoints.Basket
 {
@@ -11,9 +13,11 @@ namespace Basket.API.Endpoints.Basket
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/basket/{userName}", async (string userName, ISender sender) =>
+            app.MapDelete("/basket", async (ClaimsPrincipal user, ISender sender) =>
             {
-                var command = new DeleteBasketCommand(userName);
+                var userId = user.GetUserId();
+
+                var command = new DeleteBasketCommand(userId);
 
                 var result = await sender.Send(command);
 

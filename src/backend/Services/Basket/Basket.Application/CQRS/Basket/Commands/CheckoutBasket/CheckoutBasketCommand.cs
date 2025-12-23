@@ -7,7 +7,8 @@ namespace Basket.Application.CQRS.Basket.Commands.CheckoutBasket
     public record CheckoutBasketResult(bool IsSuccess);
 
     public record CheckoutBasketCommand(
-        string UserName,
+        Guid UserId,
+        string Email,
         string ReceiverName,
         string PhoneNumber,
         string Street,

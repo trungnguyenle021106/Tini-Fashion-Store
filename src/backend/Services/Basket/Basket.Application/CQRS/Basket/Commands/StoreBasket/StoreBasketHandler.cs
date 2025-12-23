@@ -15,7 +15,7 @@ namespace Basket.Application.CQRS.Basket.Commands.StoreBasket
 
         public async Task<StoreBasketResult> Handle(StoreBasketCommand command, CancellationToken cancellationToken)
         {
-            var shoppingCart = new ShoppingCart(command.UserName);
+            var shoppingCart = new ShoppingCart(command.UserId);
 
             foreach (var item in command.Items)
             {
@@ -31,7 +31,7 @@ namespace Basket.Application.CQRS.Basket.Commands.StoreBasket
 
            await _repository.UpdateBasketAsync(shoppingCart, cancellationToken);
 
-            return new StoreBasketResult(shoppingCart.UserName);
+            return new StoreBasketResult(shoppingCart.UserId);
         }
     }
 }

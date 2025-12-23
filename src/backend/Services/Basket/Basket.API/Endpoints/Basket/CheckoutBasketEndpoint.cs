@@ -1,14 +1,15 @@
 ﻿using Basket.Application.CQRS.Basket.Commands.CheckoutBasket;
 using BuildingBlocks.Core.Enums;
+using BuildingBlocks.Infrastructure.Extensions;
 using Carter;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Basket.API.Endpoints.Basket
 {
     public record CheckoutBasketRequest(
-        string UserName,
         string ReceiverName,
         string PhoneNumber,
         string Street,
@@ -22,9 +23,20 @@ namespace Basket.API.Endpoints.Basket
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/basket/checkout", async ([FromBody] CheckoutBasketRequest request, ISender sender) =>
+            app.MapPost("/basket/checkout", async (ClaimsPrincipal user, [FromBody] CheckoutBasketRequest request, ISender sender) =>
             {
-                var command = request.Adapt<CheckoutBasketCommand>();
+                var userId = user.GetUserId();
+                var email = user.GetEmail();
+
+                var command = new CheckoutBasketCommand(
+                    userId,
+                    email,
+                    request.ReceiverName,
+                    request.PhoneNumber,
+                    request.Street,
+                    request.Ward,
+                    request.Note
+                );
 
                 var result = await sender.Send(command);
 

@@ -1,12 +1,14 @@
 ﻿using Basket.Application.CQRS.Basket.Commands.StoreBasket;
+using BuildingBlocks.Infrastructure.Extensions;
 using Carter;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Basket.API.Endpoints.Basket
 {
-    public record StoreBasketRequest(string UserName, List<StoreBasketItemRequest> Items);
+    public record StoreBasketRequest(List<StoreBasketItemRequest> Items);
 
     public record StoreBasketItemRequest(
         int Quantity,
@@ -22,9 +24,10 @@ namespace Basket.API.Endpoints.Basket
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/basket", async ([FromBody] StoreBasketRequest request, ISender sender) =>
+            app.MapPost("/basket", async (ClaimsPrincipal user, [FromBody] StoreBasketRequest request, ISender sender) =>
             {
-                var command = request.Adapt<StoreBasketCommand>();
+                var userID = user.GetUserId();
+                var command = new StoreBasketCommand(userID, request.Items.Adapt<List<CartItemDto>>());
 
                 var result = await sender.Send(command);
 

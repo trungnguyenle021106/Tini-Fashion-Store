@@ -1,11 +1,13 @@
 ﻿using Basket.Application.CQRS.Basket.Queries.GetBasket;
+using BuildingBlocks.Infrastructure.Extensions;
 using Carter;
 using Mapster;
 using MediatR;
+using System.Security.Claims;
 
 namespace Basket.API.Endpoints.Basket
 {
-    public record ShoppingCartResponse(string UserName, List<ShoppingCartItemResponse> Items, decimal TotalPrice);
+    public record ShoppingCartResponse(Guid UserId, List<ShoppingCartItemResponse> Items, decimal TotalPrice);
 
     public record ShoppingCartItemResponse(
         int Quantity,
@@ -21,9 +23,10 @@ namespace Basket.API.Endpoints.Basket
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/basket/{userName}", async (string userName, ISender sender) =>
+            app.MapGet("/basket", async (ClaimsPrincipal user, ISender sender) =>
             {
-                var query = new GetBasketQuery(userName);
+                var userId = user.GetUserId();
+                var query = new GetBasketQuery(userId);
 
                 var result = await sender.Send(query);
 

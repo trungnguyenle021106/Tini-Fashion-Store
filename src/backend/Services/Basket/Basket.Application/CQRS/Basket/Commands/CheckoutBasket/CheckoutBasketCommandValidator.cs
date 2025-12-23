@@ -6,7 +6,9 @@ namespace Basket.Application.CQRS.Basket.Commands.CheckoutBasket
     {
         public CheckoutBasketCommandValidator()
         {
-            RuleFor(x => x.UserName).NotEmpty().WithMessage("Tên đăng nhập không được để trống");
+            RuleFor(x=>x.UserId).NotEmpty().WithMessage("UserId không được để trống");
+
+            RuleFor(x => x.Email).NotEmpty().WithMessage("Tên đăng nhập không được để trống");
 
             RuleFor(x => x.ReceiverName)
                 .NotEmpty().WithMessage("Tên người nhận không được để trống.");

@@ -18,15 +18,16 @@ namespace Basket.Application.CQRS.Basket.Commands.CheckoutBasket
 
         public async Task<CheckoutBasketResult> Handle(CheckoutBasketCommand command, CancellationToken cancellationToken)
         {
-            var basket = await _repository.GetBasketAsync(command.UserName, cancellationToken);
+            var basket = await _repository.GetBasketAsync(command.UserId, cancellationToken);
             if (basket == null)
             {
-                throw new KeyNotFoundException($"Giỏ hàng trống: {command.UserName}");
+                throw new KeyNotFoundException($"Giỏ hàng trống: {command.Email}");
             }
 
             var eventMessage = new BasketCheckoutEvent
             {
-                Email = command.UserName,
+                UserId = command.UserId,
+                Email = command.Email,
                 TotalPrice = basket.TotalPrice,
                 ReceiverName = command.ReceiverName,
                 PhoneNumber = command.PhoneNumber,
@@ -40,7 +41,7 @@ namespace Basket.Application.CQRS.Basket.Commands.CheckoutBasket
 
             await _publishEndpoint.Publish(eventMessage, cancellationToken);
 
-            await _repository.DeleteBasketAsync(command.UserName, cancellationToken);
+            await _repository.DeleteBasketAsync(command.UserId, cancellationToken);
 
             return new CheckoutBasketResult(true);
         }

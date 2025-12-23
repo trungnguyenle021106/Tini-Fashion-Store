@@ -10,9 +10,9 @@ namespace BuildingBlocks.Infrastructure.Extensions
             return Guid.TryParse(userId, out var parsedId) ? parsedId : Guid.Empty;
         }
 
-        public static string? GetUserName(this ClaimsPrincipal principal)
+        public static string GetEmail(this ClaimsPrincipal principal)
         {
-            return principal.FindFirstValue(ClaimTypes.Email);
+            return principal.FindFirstValue(ClaimTypes.Email) ?? "";
         }
     }
 }

@@ -6,8 +6,8 @@ namespace Basket.Application.CQRS.Basket.Commands.StoreBasket
     {
         public StoreBasketCommandValidator()
         {
-            RuleFor(x => x.UserName)
-                .NotEmpty().WithMessage("UserName không được bỏ trống.");
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId không được bỏ trống.");
 
             RuleFor(x => x.Items)
                 .NotNull().WithMessage("Giỏ hàng không được rỗng.");

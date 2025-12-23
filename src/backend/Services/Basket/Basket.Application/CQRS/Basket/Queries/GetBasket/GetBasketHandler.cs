@@ -15,10 +15,10 @@ namespace Basket.Application.CQRS.Basket.Queries.GetBasket
 
         public async Task<GetBasketResult> Handle(GetBasketQuery query, CancellationToken cancellationToken)
         {
-            var basket = await _repository.GetBasketAsync(query.UserName, cancellationToken);
+            var basket = await _repository.GetBasketAsync(query.UserId, cancellationToken);
             if (basket == null)
             {
-                basket = new ShoppingCart(query.UserName);
+                basket = new ShoppingCart(query.UserId);
             }
 
             return new GetBasketResult(basket);

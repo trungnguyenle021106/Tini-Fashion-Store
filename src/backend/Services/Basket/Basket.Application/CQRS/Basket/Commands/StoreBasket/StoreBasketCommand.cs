@@ -10,8 +10,8 @@ namespace Basket.Application.CQRS.Basket.Commands.StoreBasket
         string PictureUrl
     );
 
-    public record StoreBasketResult(string UserName);
+    public record StoreBasketResult(Guid UserId);
 
-    public record StoreBasketCommand(string UserName, List<CartItemDto> Items)
+    public record StoreBasketCommand(Guid UserId, List<CartItemDto> Items)
         : ICommand<StoreBasketResult>;
 }
