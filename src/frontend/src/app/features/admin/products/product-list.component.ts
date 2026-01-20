@@ -56,16 +56,17 @@ export class ProductListComponent implements OnInit {
   pageSize = 10;
   keyword = '';
   selectedCategoryId: string | null = null;
-  
+
   // [CẬP NHẬT] Biến filter trạng thái
   selectedStatus: number | null = null;
-  
+  isFiltersVisible = false;
+
   // [CẬP NHẬT] Mảng options status lấy đúng theo file Utils của bạn
   statusOptions = [
-      { label: ProductStatusLabel[ProductStatus.Active], value: ProductStatus.Active },       // Đang bán
-      { label: ProductStatusLabel[ProductStatus.OutOfStock], value: ProductStatus.OutOfStock }, // Hết hàng
-      { label: ProductStatusLabel[ProductStatus.Discontinued], value: ProductStatus.Discontinued }, // Ngừng bán
-      { label: ProductStatusLabel[ProductStatus.Draft], value: ProductStatus.Draft }          // Nháp
+    { label: ProductStatusLabel[ProductStatus.Active], value: ProductStatus.Active },       // Đang bán
+    { label: ProductStatusLabel[ProductStatus.OutOfStock], value: ProductStatus.OutOfStock }, // Hết hàng
+    { label: ProductStatusLabel[ProductStatus.Discontinued], value: ProductStatus.Discontinued }, // Ngừng bán
+    { label: ProductStatusLabel[ProductStatus.Draft], value: ProductStatus.Draft }          // Nháp
   ];
 
   isLastPage = false;
@@ -108,6 +109,10 @@ export class ProductListComponent implements OnInit {
     this.loadCategoriesForDropdown();
   }
 
+  toggleFilters() {
+    this.isFiltersVisible = !this.isFiltersVisible;
+  }
+
   loadCategoriesForDropdown() {
     this.categoryService.getCategories(1, 100).subscribe((res: any) => {
       this.categories = res.categories ? res.categories.data : [];
@@ -132,10 +137,10 @@ export class ProductListComponent implements OnInit {
       this.pageSize,
       this.keyword,
       this.selectedCategoryId || undefined,
-      undefined, 
+      undefined,
       true, // Mặc định includeDrafts = true để nếu lọc status=Draft thì vẫn hiện
       isForceRefresh,
-      this.selectedStatus !== null ? this.selectedStatus : undefined 
+      this.selectedStatus !== null ? this.selectedStatus : undefined
     ).subscribe({
       next: (res: any) => {
         const newProducts = res.products.data;
@@ -162,6 +167,10 @@ export class ProductListComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  trackByProductId(index: number, product: Product) {
+    return product.id; // Chỉ định ID là định danh duy nhất
   }
 
   onScroll(event: any) {
@@ -205,40 +214,35 @@ export class ProductListComponent implements OnInit {
   }
 
   saveProduct() {
-    if (this.productForm.invalid) {
-      this.productForm.markAllAsTouched();
-      return;
-    }
-
+    if (this.productForm.invalid) return;
     this.isSaving = true;
     const formVal = this.productForm.value;
 
-    const payload = {
-      name: formVal.name,
-      price: formVal.price,
-      description: formVal.description || '',
-      imageUrl: formVal.imageUrl || '',
-      categoryId: formVal.categoryId
-    };
+    const payload = { ...formVal };
 
-    let request$: Observable<any>;
-    if (this.isEditMode && this.currentId) {
-      request$ = this.productService.updateProduct(this.currentId, payload);
-    } else {
-      request$ = this.productService.createProduct(payload);
-    }
+    let request$: Observable<any> = this.isEditMode && this.currentId
+      ? this.productService.updateProduct(this.currentId, payload)
+      : this.productService.createProduct(payload);
 
     request$.subscribe({
-      next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã lưu sản phẩm' });
+      next: (res: any) => {
+        this.messageService.add({ severity: 'success', summary: 'Thành công' });
+
+        if (this.isEditMode && this.currentId) {
+          // CẬP NHẬT CỤC BỘ ĐỂ GIỮ VỊ TRÍ
+          const index = this.products.findIndex(p => p.id === this.currentId);
+          if (index !== -1) {
+            // Kết hợp dữ liệu cũ và mới (giữ lại các field không có trong form như status)
+            this.products[index] = { ...this.products[index], ...formVal };
+          }
+        } else {
+          // Nếu thêm mới thì mới load lại từ đầu
+          this.loadProducts();
+        }
         this.displayDialog = false;
         this.isSaving = false;
-        this.loadProducts();
       },
-      error: () => {
-        this.isSaving = false;
-        this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Không thể lưu sản phẩm' });
-      }
+      error: () => this.isSaving = false
     });
   }
 
@@ -250,46 +254,37 @@ export class ProductListComponent implements OnInit {
 
   saveStock() {
     if (this.stockForm.invalid || !this.stockProduct) return;
-
     this.isSaving = true;
     const { action, quantity } = this.stockForm.value;
     const productId = this.stockProduct.id;
-    const payload = { quantity: quantity };
 
     const request$ = action === 'add'
-      ? this.productService.addStock(productId, payload)
-      : this.productService.removeStock(productId, payload);
+      ? this.productService.addStock(productId, { quantity })
+      : this.productService.removeStock(productId, { quantity });
 
     request$.subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Thành công',
-          detail: action === 'add' ? `Đã nhập thêm ${quantity} sản phẩm` : `Đã giảm ${quantity} sản phẩm`
-        });
+        // CẬP NHẬT SỐ LƯỢNG TRỰC TIẾP
+        const index = this.products.findIndex(p => p.id === productId);
+        if (index !== -1) {
+          const change = action === 'add' ? quantity : -quantity;
+          this.products[index].quantity += change;
+        }
+
+        this.messageService.add({ severity: 'success', summary: 'Thành công' });
         this.displayStockDialog = false;
         this.isSaving = false;
-        this.loadProducts();
       },
-      error: (err) => {
-        this.isSaving = false;
-        console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Không thể cập nhật kho' });
-      }
+      error: () => this.isSaving = false
     });
   }
 
   toggleStatus(product: Product) {
     const isCurrentlyActive = product.status === ProductStatus.Active;
-    const actionLabel = isCurrentlyActive ? 'ngừng bán' : 'mở bán lại'; // Update theo từ ngữ trong Utils
+    const newStatus = isCurrentlyActive ? ProductStatus.Discontinued : ProductStatus.Active;
 
     this.confirmationService.confirm({
-      message: `Bạn có chắc muốn ${actionLabel} sản phẩm "${product.name}"?`,
-      header: 'Xác nhận trạng thái',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Đồng ý',
-      acceptButtonStyleClass: isCurrentlyActive ? 'p-button-danger' : 'p-button-success',
-      rejectLabel: 'Hủy',
+      message: `Bạn có chắc muốn đổi trạng thái sản phẩm này?`,
       accept: () => {
         const req$ = isCurrentlyActive
           ? this.productService.discontinueProduct(product.id)
@@ -297,10 +292,13 @@ export class ProductListComponent implements OnInit {
 
         req$.subscribe({
           next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Cập nhật', detail: 'Đã thay đổi trạng thái' });
-            this.loadProducts();
-          },
-          error: () => this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Có lỗi xảy ra' })
+            // CHỈ ĐỔI TRẠNG THÁI TRÊN DÒNG ĐÓ
+            const index = this.products.findIndex(p => p.id === product.id);
+            if (index !== -1) {
+              this.products[index].status = newStatus;
+            }
+            this.messageService.add({ severity: 'success', summary: 'Đã cập nhật' });
+          }
         });
       }
     });

@@ -167,19 +167,23 @@ export class CatalogComponent implements OnInit {
   }
 
   // 5. Bắt sự kiện cuộn trang (Window Scroll)
-  @HostListener('window:scroll', [])
+@HostListener('window:scroll', [])
   onWindowScroll() {
-    // Nếu đang loading hoặc đã hiển thị hết thì dừng
+    // 1. Nếu đang loading hoặc đã hiển thị hết thì dừng (Giữ nguyên logic cũ)
     if (this.isLoadingInit || this.isLoadingMore || this.displayProducts.length >= this.allFilteredProducts.length) {
       return;
     }
 
-    // Tính toán vị trí cuộn: (Chiều cao nội dung - Chiều cao màn hình)
-    // Nếu cuộn gần tới đáy (còn 200px)
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+    // 2. Lấy các thông số chiều cao
+    const currentScrollPosition = window.innerHeight + window.scrollY; // Vị trí đáy màn hình hiện tại
+    const totalPageHeight = document.body.offsetHeight; // Tổng chiều cao nội dung trang
+
+    // 3. Kiểm tra: Nếu vị trí hiện tại >= 90% tổng chiều cao thì load tiếp
+    // (totalPageHeight * 0.9 nghĩa là mốc 90%)
+    if (currentScrollPosition >= totalPageHeight * 0.9) {
       this.isLoadingMore = true;
       
-      // Giả lập delay loading thêm (để hiện skeleton cho đẹp)
+      // Giả lập delay loading thêm
       setTimeout(() => {
         this.appendItems();
         this.isLoadingMore = false;

@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
   currentPage = 1;
   pageSize = 8;
   totalRecords = 0;
-  
+
   // Loading States
   isLoadingProducts = true;      // Loading lần đầu
   isLoadingMore = false;         // Loading khi cuộn thêm
@@ -53,15 +53,15 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     // Load trang 1 ngay khi vào
-    this.loadFeaturedProducts(1, false); 
+    this.loadFeaturedProducts(1, false);
   }
 
   // Hàm Load sản phẩm (Có tham số isAppend)
   loadFeaturedProducts(page: number, isAppend: boolean = false) {
     if (isAppend) {
-        this.isLoadingMore = true;
+      this.isLoadingMore = true;
     } else {
-        this.isLoadingProducts = true;
+      this.isLoadingProducts = true;
     }
 
     this.productService.getProducts(page, this.pageSize)
@@ -94,17 +94,24 @@ export class HomeComponent implements OnInit {
   // Bắt sự kiện cuộn toàn trang
   @HostListener('window:scroll', [])
   onWindowScroll() {
-    // 1. Nếu đang loading hoặc đã hết trang -> Dừng
+    // 1. Kiểm tra điều kiện chặn như cũ
     if (this.isLoadingProducts || this.isLoadingMore || this.isLastPage) return;
 
-    // 2. Tính toán vị trí cuộn (Cách đáy 100px thì load tiếp)
-    const threshold = 100;
-    const position = window.innerHeight + window.scrollY;
-    const height = document.body.offsetHeight;
+    // 2. Lấy các thông số chiều cao
+    const scrollTop = window.scrollY || document.documentElement.scrollTop; // Vị trí thanh cuộn hiện tại
+    const viewportHeight = window.innerHeight; // Chiều cao màn hình đang hiển thị
+    const totalHeight = document.documentElement.scrollHeight; // Tổng chiều cao của toàn bộ trang web
 
-    if (position >= height - threshold) {
-      this.currentPage++; // Tăng trang
-      this.loadFeaturedProducts(this.currentPage, true); // Gọi hàm với isAppend = true
+    // 3. Tính toán vị trí hiện tại của đáy màn hình
+    const currentBottomPosition = scrollTop + viewportHeight;
+
+    // 4. Thiết lập tỷ lệ phần trăm muốn load (0.8 là 80%, 0.9 là 90%)
+    const triggerPercentage = 0.9;
+
+    // 5. Kiểm tra: Nếu vị trí hiện tại >= 90% tổng chiều cao trang thì load tiếp
+    if (currentBottomPosition >= totalHeight * triggerPercentage) {
+      this.currentPage++;
+      this.loadFeaturedProducts(this.currentPage, true);
     }
   }
 
