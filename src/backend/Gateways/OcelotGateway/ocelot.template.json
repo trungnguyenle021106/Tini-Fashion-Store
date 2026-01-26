@@ -1,0 +1,232 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/auth/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/register",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/auth/refresh-token",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/refresh-token",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/auth/logout",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/logout",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/auth/verify-email",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/verify-email",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/auth/info",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/info",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
+      "Priority": 5
+    },
+    {
+      "DownstreamPathTemplate": "/users/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+
+    {
+      "DownstreamPathTemplate": "/products/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{CATALOG_HOST}}",
+          "Port": {{CATALOG_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/products/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/categories/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{CATALOG_HOST}}",
+          "Port": {{CATALOG_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/categories/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/categories/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{CATALOG_HOST}}",
+          "Port": {{CATALOG_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/categories/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/categories",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{CATALOG_HOST}}",
+          "Port": {{CATALOG_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/categories",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
+      "Priority": 10
+    },
+    {
+      "DownstreamPathTemplate": "/categories/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{CATALOG_HOST}}",
+          "Port": {{CATALOG_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/categories/{id}",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
+      "Priority": 11
+    },
+    {
+      "DownstreamPathTemplate": "/products/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{CATALOG_HOST}}",
+          "Port": {{CATALOG_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/products/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+
+    {
+      "DownstreamPathTemplate": "/basket/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{BASKET_HOST}}",
+          "Port": {{BASKET_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/basket/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+
+    {
+      "DownstreamPathTemplate": "/orders/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{ORDERING_HOST}}",
+          "Port": {{ORDERING_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/orders/{everything}",
+      "UpstreamHttpMethod": [ "GET", "PATCH" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "DownstreamPathTemplate": "/admin/orders/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{ORDERING_HOST}}",
+          "Port": {{ORDERING_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/admin/orders/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+
+    {
+      "DownstreamPathTemplate": "/commons/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "{{IDENTITY_HOST}}",
+          "Port": {{IDENTITY_PORT}}
+        }
+      ],
+      "UpstreamPathTemplate": "/commons/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "{{OCELOT_BASE_URL}}"
+  }
+}

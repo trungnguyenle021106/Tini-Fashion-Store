@@ -1,0 +1,115 @@
+<p-toast></p-toast>
+
+<div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+  
+  <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Quản lý danh mục</h1>
+      <p class="text-gray-500 text-sm mt-1">Phân loại sản phẩm của cửa hàng.</p>
+    </div>
+
+    <div class="flex gap-2 w-full md:w-auto">
+      <span class="p-input-icon-left w-full md:w-64">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" 
+               [(ngModel)]="keyword" 
+               (keyup.enter)="onSearch()" 
+               placeholder="Tìm kiếm..." 
+               class="w-full" />
+      </span>
+
+      <button pButton label="Thêm mới" icon="pi pi-plus" 
+              class="bg-pink-600 border-pink-600 hover:bg-pink-700" 
+              (click)="openNew()"></button>
+    </div>
+  </div>
+
+  <p-table [value]="categories" 
+           [lazy]="true" 
+           (onLazyLoad)="loadCategories($event)"
+           [paginator]="true" 
+           [rows]="pageSize" 
+           [totalRecords]="totalRecords" 
+           [loading]="isLoading"
+           [rowsPerPageOptions]="[10, 20, 50]"
+           [showCurrentPageReport]="true"
+           currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} mục"
+           styleClass="p-datatable-sm p-datatable-gridlines"
+           responsiveLayout="scroll">
+    
+    <ng-template pTemplate="header">
+      <tr class="bg-gray-50">
+        <th style="width: 100px; text-align: center">Mã</th>
+        <th>Tên danh mục</th>
+        <th style="width: 150px; text-align: center">Thao tác</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-category>
+      <tr>
+        <td class="text-center">
+            <span class="text-gray-500 text-xs bg-gray-100 px-2 py-1 rounded">
+                #{{ category.id | slice:0:6 }}
+            </span>
+        </td>
+        <td class="font-medium text-gray-800 text-base">{{ category.name }}</td>
+        <td class="text-center">
+          <button pButton icon="pi pi-pencil" 
+                  class="p-button-rounded p-button-text p-button-warning hover:bg-orange-50" 
+                  pTooltip="Sửa" 
+                  tooltipPosition="top"
+                  (click)="editCategory(category)"></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" class="text-center py-8 text-gray-500">
+          <div class="flex flex-col items-center">
+            <i class="pi pi-inbox text-4xl mb-2 text-gray-300"></i>
+            <p>Không tìm thấy danh mục nào.</p>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</div>
+
+<p-dialog [(visible)]="displayDialog" 
+          [header]="isEditMode ? 'Cập nhật danh mục' : 'Thêm danh mục mới'" 
+          [modal]="true" 
+          [draggable]="false"
+          [resizable]="false"
+          [style]="{width: '450px'}" 
+          styleClass="p-fluid">
+  
+  <form [formGroup]="categoryForm" class="mt-4">
+    <div class="field">
+      <label for="name" class="font-medium text-gray-900 block mb-2">
+          Tên danh mục <span class="text-red-500">*</span>
+      </label>
+      <input pInputText id="name" formControlName="name" 
+             placeholder="Ví dụ: Áo Sơ Mi" 
+             [ngClass]="{'ng-invalid ng-dirty': categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched}"
+             autofocus />
+             
+      <small *ngIf="categoryForm.get('name')?.invalid && (categoryForm.get('name')?.dirty || categoryForm.get('name')?.touched)" 
+             class="text-red-500 block mt-1">
+        <span *ngIf="categoryForm.get('name')?.errors?.['required']">Tên danh mục không được để trống.</span>
+        <span *ngIf="categoryForm.get('name')?.errors?.['minlength']">Tên danh mục phải có ít nhất 2 ký tự.</span>
+      </small>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Hủy" icon="pi pi-times" 
+            (click)="displayDialog = false" 
+            class="p-button-text text-gray-500 hover:text-gray-700"></button>
+    <button pButton label="Lưu" icon="pi pi-check" 
+            (click)="saveCategory()" 
+            class="bg-pink-600 border-pink-600 hover:bg-pink-700" 
+            [loading]="isSaving"></button>
+  </ng-template>
+</p-dialog>

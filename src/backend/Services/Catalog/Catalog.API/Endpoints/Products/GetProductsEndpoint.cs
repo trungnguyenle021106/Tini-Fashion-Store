@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Application.MediatR.CQRS;
 using Carter;
 using Catalog.Application.CQRS.Products.Queries.GetProduct;
+using Catalog.Application.CQRS.Products.Queries.GetProduct.Catalog.Application.CQRS.Products.Queries.GetProduct;
 using Catalog.Domain.Enums;
 using Mapster;
 using MediatR;
@@ -28,23 +29,28 @@ namespace Catalog.API.Endpoints.Products
                 [FromQuery] int? pageNumber,
                 [FromQuery] int? pageSize,
                 [FromQuery] string? keyword,
+                [FromQuery] Guid? categoryId,
+                [FromQuery] Guid? excludeId,
+                [FromQuery] bool? includeDrafts,
+                [FromQuery] bool? bypassCache,
+                [FromQuery] ProductStatus? status, // <--- 2. Nhận từ Query String
                 ISender sender) =>
             {
                 var query = new GetProductsQuery(
                     pageNumber ?? 1,
                     pageSize ?? 10,
-                    keyword
+                    keyword,
+                    categoryId,
+                    excludeId,
+                    includeDrafts ?? false,
+                    bypassCache ?? false,
+                    status // <--- 3. Truyền vào Query
                 );
 
                 var result = await sender.Send(query);
-
                 var response = result.Adapt<GetProductsResponse>();
-
                 return Results.Ok(response);
-            })
-            .WithName("GetProducts")
-            .WithSummary("Get paginated products with search")
-            .WithDescription("Get products list with pagination and search support");
+            });
         }
     }
 }

@@ -17,9 +17,17 @@ namespace Catalog.Application.CQRS.Products.Queries.GetProduct
 
     public record GetProductsResult(PaginatedResult<ProductDto> Products);
 
-    public record GetProductsQuery(
-        int PageNumber = 1,
-        int PageSize = 10,
-        string? Keyword = null
-    ) : IQuery<GetProductsResult>;
+    namespace Catalog.Application.CQRS.Products.Queries.GetProduct
+    {
+        public record GetProductsQuery(
+              int PageNumber = 1,
+              int PageSize = 10,
+              string? Keyword = null,
+              Guid? CategoryId = null,
+              Guid? ExcludeId = null,
+              bool IncludeDrafts = false,
+              bool BypassCache = false,
+              ProductStatus? Status = null // <--- 1. THÊM MỚI Ở ĐÂY
+          ) : IQuery<GetProductsResult>;
+    }
 }

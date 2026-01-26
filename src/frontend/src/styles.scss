@@ -1,0 +1,50 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "primeicons/primeicons.css";
+
+/* PrimeNG Customization (Optional - nếu muốn đè style mặc định) */
+:root {
+    --primary-color: #10b981; /* Khớp với màu emerald-500 của Tailwind */
+}
+
+/* Global Reset/Base styles */
+body {
+    background-color: #ffffff;
+    font-family: var(--font-family); /* Sử dụng font mặc định của PrimeNG */
+    margin: 0;
+    padding: 0;
+}
+
+/* Animation utilities (Dùng cho chữ chạy ở trang Home) */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0; /* Mặc định ẩn để chờ animation */
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+
+/* Dùng !important để thắng được đoạn mã tự động của PrimeNG */
+:root {
+    color-scheme: light !important;
+}
+
+/* Ép các biến màu quay về trạng thái Light kể cả khi máy bật Dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: light !important;
+    }
+}

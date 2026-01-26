@@ -1,0 +1,244 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col overflow-hidden">
+
+  <div class="flex justify-between items-center mb-4 flex-shrink-0">
+    <div>
+      <h1 class="text-xl md:text-2xl font-bold text-gray-900 leading-tight">Quản lý sản phẩm</h1>
+      <p class="text-gray-500 text-xs mt-1 hidden sm:block font-light">Quản lý danh mục, giá bán và tồn kho.</p>
+    </div>
+
+    <div class="flex gap-2">
+      <button pButton 
+              type="button"
+              [icon]="isFiltersVisible ? 'pi pi-chevron-up' : 'pi pi-filter'" 
+              [label]="isFiltersVisible ? 'Thu gọn' : 'Bộ lọc'"
+              class="p-button-outlined p-button-secondary text-sm"
+              (click)="isFiltersVisible = !isFiltersVisible">
+      </button>
+      
+      <button pButton 
+              type="button"
+              icon="pi pi-plus" 
+              class="bg-pink-600 border-pink-600 px-3 md:px-4"
+              [label]="'Thêm'"
+              (click)="openNew()">
+      </button>
+    </div>
+  </div>
+
+  <div [ngClass]="{'hidden': !isFiltersVisible, 'flex': isFiltersVisible}" 
+       class="flex-col md:flex-row gap-2 mb-4 w-full transition-all duration-300 border-b border-gray-50 pb-4 md:border-none md:pb-0">
+    
+    <p-dropdown [options]="categories" [(ngModel)]="selectedCategoryId" 
+                optionLabel="name" optionValue="id" [showClear]="true" 
+                placeholder="Danh mục" (onChange)="loadProducts()" 
+                class="w-full md:w-44" appendTo="body">
+    </p-dropdown>
+
+    <p-dropdown [options]="statusOptions" [(ngModel)]="selectedStatus" 
+                optionLabel="label" optionValue="value" [showClear]="true" 
+                placeholder="Trạng thái" (onChange)="loadProducts()" 
+                class="w-full md:w-44" appendTo="body" styleClass="w-full">
+      <ng-template pTemplate="selectedItem" let-selected>
+        <div class="flex items-center gap-2" *ngIf="selected">
+          <p-tag [value]="selected.label" [severity]="getStatusSeverity(selected.value)" styleClass="text-xs"></p-tag>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="item" let-item>
+        <div class="flex items-center gap-2">
+          <p-tag [value]="item.label" [severity]="getStatusSeverity(item.value)" styleClass="text-xs"></p-tag>
+        </div>
+      </ng-template>
+    </p-dropdown>
+
+    <span class="p-input-icon-left w-full md:flex-1 md:max-w-xs">
+      <i class="pi pi-search text-gray-400"></i>
+      <input pInputText type="text" [(ngModel)]="keyword" (keyup.enter)="loadProducts()"
+             placeholder="Tìm tên sản phẩm..." class="w-full" />
+    </span>
+
+    <button pButton 
+            icon="pi pi-sync" 
+            class="p-button-outlined p-button-secondary w-full md:w-auto"
+            pTooltip="Làm mới danh sách"
+            (click)="refreshData()">
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto relative border border-gray-100 rounded-lg" (scroll)="onScroll($event)" #scrollContainer>
+    <p-table [value]="products" 
+             [lazy]="true" 
+             [totalRecords]="totalRecords" 
+             [rowTrackBy]="trackByProductId"
+             [loading]="isLoading && products.length === 0" 
+             styleClass="p-datatable-sm p-datatable-gridlines"
+             responsiveLayout="stack" 
+             [breakpoint]="'960px'">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 80px" class="bg-gray-50">Ảnh</th>
+          <th style="min-width: 200px" class="bg-gray-50">Tên sản phẩm</th>
+          <th style="width: 150px" class="bg-gray-50">Danh mục</th>
+          <th style="width: 120px; text-align: right" class="bg-gray-50">Giá bán</th>
+          <th style="width: 100px; text-align: center" class="bg-gray-50">Kho</th>
+          <th style="width: 120px; text-align: center" class="bg-gray-50">Trạng thái</th>
+          <th style="width: 140px; text-align: center" class="bg-gray-50">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-product>
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td>
+            <span class="p-column-title font-bold md:hidden">Ảnh</span>
+            <p-image [src]="product.imageUrl || 'https://placehold.co/50x50?text=No+Img'" 
+                     alt="Product" width="50" [preview]="true" 
+                     imageClass="rounded border border-gray-200 shadow-sm"></p-image>
+          </td>
+          <td>
+            <span class="p-column-title font-bold md:hidden">Tên SP</span>
+            <div class="inline-block align-middle">
+              <div class="font-semibold text-gray-800">{{ product.name }}</div>
+              <div class="text-[10px] text-gray-400 uppercase tracking-tighter">ID: {{ product.id | slice:0:8 }}</div>
+            </div>
+          </td>
+          <td>
+            <span class="p-column-title font-bold md:hidden">Danh mục</span>
+            <span class="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
+              {{ getCategoryName(product.categoryId) }}
+            </span>
+          </td>
+          <td class="md:text-right">
+            <span class="p-column-title font-bold md:hidden">Giá bán</span>
+            <span class="text-gray-900 font-bold">{{ product.price | currency:'VND':'symbol':'1.0-0' }}</span>
+          </td>
+          <td class="md:text-center">
+            <span class="p-column-title font-bold md:hidden">Kho hàng</span>
+            <div class="flex items-center justify-center gap-2">
+              <span [class.text-red-500]="product.quantity < 5" [class.font-bold]="product.quantity === 0">
+                {{ product.quantity }}
+              </span>
+              <button pButton icon="pi pi-box" 
+                      class="p-button-rounded p-button-text p-button-secondary p-0 h-6 w-6" 
+                      (click)="openStockDialog(product)"></button>
+            </div>
+          </td>
+          <td class="md:text-center">
+            <span class="p-column-title font-bold md:hidden">Trạng thái</span>
+            <p-tag [value]="getStatusLabel(product.status)" [severity]="getStatusSeverity(product.status)"></p-tag>
+          </td>
+          <td class="md:text-center">
+            <span class="p-column-title font-bold md:hidden">Thao tác</span>
+            <div class="flex md:justify-center gap-2">
+              <button pButton icon="pi pi-pencil" 
+                      class="p-button-rounded p-button-outlined p-button-warning w-8 h-8" 
+                      (click)="editProduct(product)"></button>
+              <button pButton 
+                      [icon]="product.status === ProductStatus.Active ? 'pi pi-ban' : 'pi pi-check-circle'" 
+                      class="p-button-rounded p-button-outlined w-8 h-8"
+                      [ngClass]="product.status === ProductStatus.Active ? 'p-button-danger' : 'p-button-success'"
+                      (click)="toggleStatus(product)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center py-12">
+            <i class="pi pi-inbox text-4xl text-gray-200 mb-3 block"></i>
+            <span class="text-gray-400">Không tìm thấy sản phẩm nào phù hợp</span>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+
+    <div *ngIf="isLoading && products.length > 0" class="py-4 text-center text-pink-600 bg-gray-50">
+      <i class="pi pi-spin pi-spinner text-2xl"></i>
+    </div>
+
+    <div *ngIf="isLastPage && products.length > 0" class="py-4 text-center text-gray-400 text-xs italic">
+      Đã hiển thị tất cả sản phẩm trong kho.
+    </div>
+  </div>
+</div>
+
+<p-dialog [(visible)]="displayDialog" [header]="isEditMode ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm mới'" 
+          [modal]="true" [breakpoints]="{'960px': '90vw', '640px': '100vw'}" 
+          [style]="{width: '750px'}" [draggable]="false" styleClass="p-fluid">
+  
+  <form [formGroup]="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+    <div class="flex flex-col gap-4">
+      <div class="field">
+        <label class="font-semibold text-gray-700 mb-1 block">Tên sản phẩm <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="name" placeholder="Nhập tên sản phẩm..." />
+        <small *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="p-error">Tên là bắt buộc.</small>
+      </div>
+
+      <div class="field">
+        <label class="font-semibold text-gray-700 mb-1 block">Danh mục <span class="text-red-500">*</span></label>
+        <p-dropdown [options]="categories" formControlName="categoryId" optionLabel="name" optionValue="id" 
+                    placeholder="Chọn danh mục" appendTo="body" [filter]="true"></p-dropdown>
+      </div>
+
+      <div class="field">
+        <label class="font-semibold text-gray-700 mb-1 block">Giá bán</label>
+        <p-inputNumber formControlName="price" mode="currency" currency="VND" locale="vi-VN"></p-inputNumber>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <div class="field">
+        <label class="font-semibold text-gray-700 mb-1 block">URL Hình ảnh</label>
+        <input pInputText formControlName="imageUrl" placeholder="https://..." />
+        <div class="mt-2 h-24 bg-gray-50 rounded border border-dashed flex items-center justify-center overflow-hidden">
+          <img *ngIf="productForm.get('imageUrl')?.value" [src]="productForm.get('imageUrl')?.value" class="h-full object-contain" />
+          <i *ngIf="!productForm.get('imageUrl')?.value" class="pi pi-image text-gray-300 text-3xl"></i>
+        </div>
+      </div>
+      <div class="field">
+        <label class="font-semibold text-gray-700 mb-1 block">Mô tả</label>
+        <textarea pInputTextarea formControlName="description" rows="3" placeholder="Thông tin sản phẩm..."></textarea>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Hủy" (click)="displayDialog = false" class="p-button-text text-gray-400"></button>
+    <button pButton label="Lưu sản phẩm" icon="pi pi-check" (click)="saveProduct()" 
+            class="bg-pink-600 border-pink-600" [loading]="isSaving"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="displayStockDialog" header="Cập nhật kho hàng" [modal]="true" 
+          [style]="{width: '380px'}" styleClass="p-fluid">
+  <div *ngIf="stockProduct" class="mb-4 text-center bg-gray-50 p-3 rounded-lg">
+    <div class="font-bold text-gray-800">{{ stockProduct.name }}</div>
+    <div class="text-xs text-gray-500">Tồn hiện tại: {{ stockProduct.quantity }}</div>
+  </div>
+
+  <form [formGroup]="stockForm" class="flex flex-col gap-6">
+    <div class="flex gap-4 justify-center">
+      <div class="flex items-center gap-2">
+        <p-radioButton name="action" value="add" formControlName="action" inputId="act_add"></p-radioButton>
+        <label for="act_add" class="cursor-pointer text-green-600 font-bold">Nhập (+)</label>
+      </div>
+      <div class="flex items-center gap-2">
+        <p-radioButton name="action" value="remove" formControlName="action" inputId="act_remove"></p-radioButton>
+        <label for="act_remove" class="cursor-pointer text-red-600 font-bold">Xuất (-)</label>
+      </div>
+    </div>
+    <p-inputNumber formControlName="quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal" 
+                  inputStyleClass="text-center text-xl font-bold" incrementButtonIcon="pi pi-plus" 
+                  decrementButtonIcon="pi pi-minus"></p-inputNumber>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Xác nhận" (click)="saveStock()" 
+            [class]="stockForm.get('action')?.value === 'add' ? 'bg-green-600 border-green-600' : 'bg-red-600 border-red-600'" 
+            [loading]="isSaving"></button>
+  </ng-template>
+</p-dialog>
