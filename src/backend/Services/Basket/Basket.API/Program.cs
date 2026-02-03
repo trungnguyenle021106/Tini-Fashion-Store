@@ -38,3 +38,8 @@ app.UseAuthorization();
 app.MapCarter();
 
 app.Run();
+
+namespace Basket.API
+{
+    public partial class Program { }
+}
