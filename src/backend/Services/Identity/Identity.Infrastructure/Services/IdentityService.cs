@@ -111,10 +111,16 @@ namespace Identity.Infrastructure.Services
             await _cache.SetStringAsync(key, "1", options);
         }
 
-        public async Task ConfirmEmailAsync(string userId, string code)
+        public async Task<string> ConfirmEmailAsync(string userId, string code)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) throw new ValidationException("User không tồn tại.");
+
+            // 1. KIỂM TRA LOGIC MỚI: Nếu đã xác thực rồi thì return luôn
+            if (user.EmailConfirmed)
+            {
+                return "AlreadyVerified"; // Trả về cờ hiệu này
+            }
 
             // Decode token lại thành dạng gốc
             var decodedCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
@@ -124,6 +130,8 @@ namespace Identity.Infrastructure.Services
             {
                 throw new ValidationException("Xác thực email thất bại hoặc token đã hết hạn.");
             }
+
+            return "Success";
         }
 
         public async Task<AuthenticationResult> LoginAsync(string email, string password)

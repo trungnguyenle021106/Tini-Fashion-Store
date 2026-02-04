@@ -18,8 +18,18 @@ namespace Identity.API.Endpoints.Auth
                 try
                 {
                     var command = new VerifyEmailCommand(userId, code);
-                    await sender.Send(command);
 
+                    // Nhận kết quả status từ Handler
+                    var status = await sender.Send(command);
+
+                    // LOGIC MỚI: Điều hướng dựa trên status
+                    if (status == "AlreadyVerified")
+                    {
+                        // Nếu đã xác thực rồi -> Về trang chủ
+                        return Results.Redirect("https://sury.store/");
+                    }
+
+                    // Nếu vừa mới xác thực thành công -> Về trang login
                     return Results.Redirect("https://sury.store/auth/login?verifyStatus=success");
                 }
                 catch (Exception ex)
