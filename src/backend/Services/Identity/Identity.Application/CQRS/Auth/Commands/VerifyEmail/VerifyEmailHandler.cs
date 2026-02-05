@@ -3,7 +3,8 @@ using MediatR;
 
 namespace Identity.Application.CQRS.Auth.Commands.VerifyEmail
 {
-    public class VerifyEmailHandler : IRequestHandler<VerifyEmailCommand, bool>
+    // Đổi kiểu trả về từ bool sang string
+    public class VerifyEmailHandler : IRequestHandler<VerifyEmailCommand, string>
     {
         private readonly IIdentityService _identityService;
 
@@ -12,10 +13,10 @@ namespace Identity.Application.CQRS.Auth.Commands.VerifyEmail
             _identityService = identityService;
         }
 
-        public async Task<bool> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
         {
-            await _identityService.ConfirmEmailAsync(request.UserId, request.Code);
-            return true;
+            // Trả về kết quả từ Service ("Success" hoặc "AlreadyVerified")
+            return await _identityService.ConfirmEmailAsync(request.UserId, request.Code);
         }
     }
 }

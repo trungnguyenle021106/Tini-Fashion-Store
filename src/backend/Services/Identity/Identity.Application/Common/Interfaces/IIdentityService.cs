@@ -11,6 +11,6 @@ namespace Identity.Application.Common.Interfaces
         Task RevokeTokenAsync(string token);
         Task ForgotPasswordAsync(string email);
         Task ResetPasswordAsync(string email, string token, string newPassword);
-        Task ConfirmEmailAsync(string userId, string code);
+        Task<string> ConfirmEmailAsync(string userId, string code);
     }
 }

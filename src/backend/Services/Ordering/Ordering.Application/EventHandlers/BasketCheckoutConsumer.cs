@@ -1,12 +1,12 @@
-﻿using BuildingBlocks.Core.Messaging;
+﻿using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Core.Messaging;
 using MassTransit;
 using MediatR;
 using Ordering.Application.CQRS.Orders.Commands.CreateOrder;
 
-
 namespace Ordering.Application.EventHandlers
 {
-    public class BasketCheckoutConsumer : IConsumer<BasketCheckoutEvent>
+    public class BasketCheckoutConsumer : IConsumer<StockConfirmedEvent>
     {
         private readonly ISender _sender;
 
@@ -15,13 +15,13 @@ namespace Ordering.Application.EventHandlers
             _sender = sender;
         }
 
-        public async Task Consume(ConsumeContext<BasketCheckoutEvent> context)
+        public async Task Consume(ConsumeContext<StockConfirmedEvent> context)
         {
             var message = context.Message;
 
             var command = new CreateOrderCommand(
-                OrderId : message.OrderId,
-                UserId: message.UserId, 
+                OrderId: message.OrderId,
+                UserId: message.UserId,
                 TotalPrice: message.TotalPrice,
                 ShippingAddress: new AddressDto(
                     message.ReceiverName,
@@ -43,7 +43,7 @@ namespace Ordering.Application.EventHandlers
 
             await _sender.Send(command);
 
-            Console.WriteLine($"[Ordering] Order created automatically for User: {message.UserId}");
+            Console.WriteLine($"[Ordering] Order created SUCCESSFULLY (after stock check) for User: {message.UserId}");
         }
     }
 }

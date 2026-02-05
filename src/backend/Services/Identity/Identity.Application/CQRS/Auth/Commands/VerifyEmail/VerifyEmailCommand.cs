@@ -2,5 +2,5 @@
 
 namespace Identity.Application.CQRS.Auth.Commands.VerifyEmail
 {
-    public record VerifyEmailCommand(string UserId, string Code) : ICommand<bool>;
+    public record VerifyEmailCommand(string UserId, string Code) : ICommand<string>;
 }

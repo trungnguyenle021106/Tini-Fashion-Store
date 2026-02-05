@@ -1,4 +1,4 @@
 ﻿namespace BuildingBlocks.Application.Messaging
 {
-    public record OrderStockRejectedEvent(Guid OrderId);
+    public record OrderStockRejectedEvent(Guid OrderId, string message);
 }
